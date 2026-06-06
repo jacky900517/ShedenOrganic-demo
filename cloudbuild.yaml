@@ -1,0 +1,47 @@
+substitutions:
+  _REGION: asia-east1
+  _REPOSITORY: sheden-organic
+  _SERVICE: sheden-organic
+  _IMAGE: app
+  _CLOUD_SQL_INSTANCE: your-project:asia-east1:your-cloud-sql-instance
+  _SERVICE_ACCOUNT: your-cloud-run-service-account@your-project.iam.gserviceaccount.com
+  _GCS_BUCKET: your-uploads-bucket
+  _GCS_PREFIX: prod
+  _DATABASE_SECRET: sheden-database-url
+  _INITIAL_ROOT_PASSWORD_SECRET: sheden-initial-root-password
+
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - $_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$BUILD_ID
+      - .
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - $_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$BUILD_ID
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - $_SERVICE
+      - --image
+      - $_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$BUILD_ID
+      - --region
+      - $_REGION
+      - --allow-unauthenticated
+      - --add-cloudsql-instances
+      - $_CLOUD_SQL_INSTANCE
+      - --service-account
+      - $_SERVICE_ACCOUNT
+      - --set-env-vars
+      - DATABASE_BACKEND=postgres,FILE_STORAGE_BACKEND=gcs,GCS_BUCKET=$_GCS_BUCKET,GCS_PREFIX=$_GCS_PREFIX,ALLOW_DEFAULT_USERS=0,AUTH_COOKIE_SECURE=1
+      - --set-secrets
+      - DATABASE_URL=$_DATABASE_SECRET:latest,INITIAL_ROOT_PASSWORD=$_INITIAL_ROOT_PASSWORD_SECRET:latest
+
+images:
+  - $_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$BUILD_ID

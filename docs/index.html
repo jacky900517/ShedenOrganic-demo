@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="application-name" content="Sheden Organic" />
+    <meta name="app-version" content="__APP_VERSION__" />
+    <meta name="theme-color" content="#1e6b4f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Sheden Organic" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <title>庫存管理系統</title>
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./styles.css?v=__APP_VERSION__" />
+  </head>
+  <body class="is-logged-out">
+    <header class="app-header">
+      <div class="header-brand">
+        <img class="app-logo" src="./icon.jpg" alt="庫存管理系統" />
+        <button id="homeNavBtn" class="nav-button home-nav-button is-hidden" type="button">首頁</button>
+        <button id="harvestNavBtn" class="nav-button is-hidden" type="button">採收規劃表</button>
+        <button id="fieldWorkRecordsNavBtn" class="nav-button is-hidden" type="button">工作紀錄</button>
+        <button id="netHouseStatusNavBtn" class="nav-button is-hidden" type="button">網室狀態</button>
+        <button id="dailyVegetableNavBtn" class="nav-button is-hidden" type="button">菜量表</button>
+        <button id="harvestPickListNavBtn" class="nav-button is-hidden" type="button">採菜單</button>
+        <button id="inventoryNavBtn" class="nav-button is-hidden" type="button">庫存</button>
+        <button id="manifestNavBtn" class="nav-button is-hidden" type="button">出貨單</button>
+        <button id="yfyNavBtn" class="nav-button is-hidden" type="button">永豐餘</button>
+        <button id="cityNavBtn" class="nav-button is-hidden" type="button">City</button>
+        <button id="generalChannelNavBtn" class="nav-button is-hidden" type="button">一般通路</button>
+        <button id="looseVegetableNavBtn" class="nav-button is-hidden" type="button">裸菜</button>
+      </div>
+      <div id="headerActions" class="header-actions">
+        <button id="importMenuBtn" class="nav-button" type="button" aria-expanded="false">匯入</button>
+        <div id="importMenuPanel" class="import-menu-panel" hidden>
+          <div class="import-menu-header">
+            <h2>匯入</h2>
+            <button id="closeImportMenuBtn" type="button">關閉</button>
+          </div>
+          <label class="import-date-control">
+            <span>匯入日期</span>
+            <input id="salesDateInput" type="date" />
+          </label>
+          <label class="import-control">
+            <input id="salesFileInput" type="file" accept=".xlsx" />
+            <span>匯入銷售 Excel</span>
+          </label>
+          <button id="importFromWebsiteBtn" type="button">從網站直接匯入excel</button>
+          <span id="importStatus" class="date-pill">尚未匯入</span>
+        </div>
+      </div>
+      <div id="recordExportActions" class="record-export-actions is-hidden">
+        <button id="headerExportFieldWorkMonthBtn" class="nav-button record-export-button is-hidden" type="button">匯出本月</button>
+        <button id="headerExportFieldBtMonthSummaryBtn" class="nav-button record-export-button is-hidden" type="button">匯出本月</button>
+      </div>
+      <div id="dailyVegetableSettings" class="daily-vegetable-settings is-hidden">
+        <button id="dailyVegetableExportBtn" class="nav-button" type="button">匯出 Excel</button>
+        <button id="dailyVegetableSettingsBtn" class="nav-button" type="button" aria-expanded="false">設定</button>
+        <div id="dailyVegetableSettingsPanel" class="daily-vegetable-settings-panel" hidden>
+          <label class="daily-vegetable-settings-date">
+            採收起始日期
+            <input id="dailyVegetableSettingsDateInput" type="date" />
+          </label>
+        </div>
+      </div>
+      <div id="authActions" class="auth-actions is-hidden">
+        <button id="logoutBtn" class="nav-button" type="button">登出</button>
+      </div>
+      <label id="languageControl" class="language-control">
+        <span id="languageControlLabel">語言</span>
+        <select id="languageSelect">
+          <option value="zh-Hant">繁體中文</option>
+          <option value="vi">Tiếng Việt</option>
+        </select>
+      </label>
+    </header>
+
+    <main>
+      <section id="loginPage" class="login-page">
+        <form id="loginForm" class="login-card">
+          <img class="login-logo" src="./icon.jpg" alt="庫存管理系統" />
+          <h1 id="loginTitle">庫存管理系統</h1>
+          <label>
+            <span id="loginUsernameLabel">帳號</span>
+            <input id="loginUsername" type="text" autocomplete="username" required />
+          </label>
+          <label>
+            <span id="loginPasswordLabel">密碼</span>
+            <input id="loginPassword" type="password" autocomplete="current-password" required />
+          </label>
+          <button id="loginSubmitBtn" class="primary-action" type="submit">登入</button>
+          <p id="loginStatus" class="login-status"></p>
+        </form>
+      </section>
+      <section id="homePage" class="home-page">
+        <div id="homeAccountBar" class="home-account-bar"></div>
+        <div class="home-hero" data-home-section="field">
+          <p id="fieldHomeKicker" class="home-kicker">田間</p>
+          <h2 id="fieldHomeTitle">田間工作紀錄</h2>
+          <div class="home-actions">
+            <button id="enterFieldWorkRecordsBtn" class="primary-action" type="button">田間工作紀錄</button>
+            <button id="enterFieldBtRecordsBtn" type="button">蘇力菌</button>
+          </div>
+        </div>
+        <div class="home-hero" data-home-section="netHouse">
+          <p id="netHouseHomeKicker" class="home-kicker">網室</p>
+          <h2 id="netHouseHomeTitle">網室狀態紀錄</h2>
+          <div class="home-actions">
+            <button id="enterNetHouseStatusRecordsBtn" class="primary-action" type="button">網室狀態紀錄</button>
+            <button id="enterDailyVegetableAvailabilityBtn" type="button">每日菜量表</button>
+            <button id="enterHarvestPickListBtn" type="button">採菜單</button>
+          </div>
+        </div>
+        <div class="home-hero home-hero-harvest" data-home-section="harvest">
+          <p class="home-kicker">每日採收規劃</p>
+          <h2>每日採收規劃</h2>
+          <div class="home-actions">
+            <button id="enterHarvestBtn" class="primary-action" type="button">採收規劃</button>
+          </div>
+        </div>
+        <div class="home-hero" data-home-section="px">
+          <p class="home-kicker">全聯</p>
+          <h2>全聯每日進銷存</h2>
+          <div class="home-actions">
+            <button id="enterInventoryBtn" class="primary-action" type="button">庫存</button>
+            <button id="enterManifestBtn" type="button">出貨單</button>
+          </div>
+        </div>
+        <div class="home-hero" data-home-section="channels">
+          <p class="home-kicker">其他通路</p>
+          <h2>永豐餘、City、一般通路、裸菜</h2>
+          <div class="home-actions">
+            <button id="enterYfyBtn" class="primary-action" type="button">永豐餘</button>
+            <button id="enterCityBtn" type="button">City</button>
+            <button id="enterGeneralChannelBtn" type="button">一般通路</button>
+            <button id="enterLooseVegetableBtn" type="button">裸菜</button>
+          </div>
+        </div>
+        <div class="home-hero" data-home-section="accountAdmin">
+          <p class="home-kicker">帳號管理</p>
+          <h2>帳號管理</h2>
+          <div class="home-actions">
+            <button id="enterAccountUsersBtn" class="primary-action" type="button">管理帳號</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <aside class="sidebar">
+          <label id="groupFilterControl">
+            庫存群組
+            <select id="groupFilter">
+              <option value="">全部 A / B</option>
+              <option value="A">A 檔</option>
+              <option value="B">B 檔</option>
+            </select>
+          </label>
+          <section class="store-picker">
+            <label>
+              門市頁搜尋
+              <input id="storeSearchInput" type="search" placeholder="例如：平鎮、230600、A/B" />
+            </label>
+            <label>
+              門市頁
+              <select id="storeSelect" size="16"></select>
+            </label>
+            <div class="store-actions">
+              <button id="toggleAddStoreBtn" class="filter-toggle" type="button">新增門市</button>
+              <button id="deleteStoreBtn" class="danger-button" type="button">刪除門市</button>
+            </div>
+            <form id="addStoreForm" class="add-store-form" hidden>
+              <div class="add-store-grid">
+                <label>
+                  檔案
+                  <select id="newStoreGroup">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                  </select>
+                </label>
+                <label>
+                  門市代號
+                  <input id="newStoreCode" type="text" inputmode="numeric" autocomplete="off" />
+                </label>
+              </div>
+              <label>
+                門市名稱
+                <input id="newStoreName" type="text" autocomplete="off" />
+              </label>
+              <label>
+                路線
+                <input id="newStoreRoute" type="text" autocomplete="off" placeholder="可留空" />
+              </label>
+              <div class="add-store-actions">
+                <button type="submit">保存新增</button>
+                <button id="cancelAddStoreBtn" type="button">取消</button>
+              </div>
+            </form>
+          </section>
+          <label id="shipmentDateControl">
+            <span id="shipmentDateLabel">出貨日期</span>
+            <input id="shipmentDateInput" type="date" />
+          </label>
+          <section id="manifestStoreFilter" class="manifest-store-filter" hidden>
+            <button id="openManifestStoreModalBtn" class="filter-toggle" type="button">選擇出貨門市</button>
+            <p id="manifestStoreSummary" class="filter-summary">出貨門市</p>
+          </section>
+          <section id="manifestRoundsSection" class="manifest-store-filter" hidden>
+            <button id="addManifestRoundBtn" class="filter-toggle" type="button">新增出貨單</button>
+            <div id="manifestRoundsList" class="manifest-rounds-list"></div>
+          </section>
+          <section class="product-filter">
+            <button id="toggleProductFilterBtn" class="filter-toggle" type="button">呼出碼篩選</button>
+            <div id="productFilterPanel" class="product-filter-panel" hidden>
+              <div class="filter-header">
+                <h2 id="productFilterSummary">呼出碼</h2>
+                <button id="selectAllProductsBtn" type="button">全選</button>
+              </div>
+              <div id="productFilterList" class="product-filter-list"></div>
+            </div>
+          </section>
+          <section id="harvestConversionSettingsSection" class="harvest-conversion-settings-section" hidden>
+            <button id="openHarvestConversionSettingsBtn" class="filter-toggle" type="button">設定</button>
+          </section>
+          <section id="harvestPackageCalculator" class="harvest-package-calculator" hidden></section>
+        </aside>
+
+        <section class="content">
+          <nav class="tabs" aria-label="Views">
+            <button class="tab inventory-view-tab is-active" data-view="salesPage" type="button">銷售頁</button>
+            <button class="tab inventory-view-tab" data-view="shipmentPage" type="button">到貨頁</button>
+            <button class="tab harvest-view-tab" data-harvest-view="planningTable" type="button" hidden>採收規劃表</button>
+            <button class="tab harvest-view-tab" data-harvest-view="messageBoard" type="button" hidden>留言板<span id="harvestMessageTabBadge" class="harvest-message-tab-badge" hidden></span></button>
+            <button class="tab harvest-view-tab" data-harvest-view="largeLabelPrint" type="button" hidden>大標</button>
+            <button class="tab harvest-view-tab" data-harvest-view="priorityOrder" type="button" hidden>排順序</button>
+          </nav>
+
+          <section id="viewTitle" class="view-title"></section>
+          <div id="tableHost" class="table-host"></div>
+        </section>
+      </section>
+    </main>
+
+      <div id="manifestStoreModal" class="modal" hidden>
+      <div class="modal-backdrop" data-close-manifest-modal="true"></div>
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2>選擇出貨門市</h2>
+          <button id="closeManifestStoreModalBtn" type="button">關閉</button>
+        </div>
+        <div class="modal-toolbar">
+          <div class="modal-toolbar-groups">
+            <button id="manifestStoreGroupABtn" class="modal-filter-btn is-active" type="button">A 檔</button>
+            <button id="manifestStoreGroupBBtn" class="modal-filter-btn" type="button">B 檔</button>
+          </div>
+          <button id="toggleAllManifestStoresBtn" class="modal-filter-btn" type="button">全選</button>
+        </div>
+        <div id="manifestStoreList" class="manifest-store-list"></div>
+      </div>
+    </div>
+
+    <script src="./app.js?v=__APP_VERSION__"></script>
+  </body>
+</html>
